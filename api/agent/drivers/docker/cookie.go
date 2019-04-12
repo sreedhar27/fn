@@ -115,6 +115,16 @@ func (c *cookie) configureFsSize(log logrus.FieldLogger) {
 	c.opts.HostConfig.StorageOpt["size"] = opt
 }
 
+func (c *cookie) configurePIDs(log logrus.FieldLogger) {
+	pids := c.task.PIDs()
+	if pids == 0 {
+		return
+	}
+
+	log.WithFields(logrus.Fields{"pids": pids, "call_id": c.task.Id()}).Debug("setting PIDs")
+	c.opts.HostConfig.PidsLimit = int64(pids)
+}
+
 func (c *cookie) configureTmpFs(log logrus.FieldLogger) {
 	// if RO Root is NOT enabled and TmpFsSize does not have any limit, then we do not need
 	// any tmpfs in the container since function can freely write whereever it wants.
